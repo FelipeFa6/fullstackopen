@@ -1,0 +1,10 @@
+sequenceDiagram
+  actor user
+  participant browser
+  participant server
+
+  user->>browser: Enters input
+  browser->>server: HTTP POST (...)/exampleapp/new_note
+  activate server
+  server-->>browser: HTTP 302 to (...)/exampleapp/notes
+  deactivate server
