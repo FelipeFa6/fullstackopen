@@ -1,0 +1,11 @@
+sequenceDiagram
+  actor user
+  participant browser
+  participant server
+
+  user->>browser: Enters input
+  browser->>server: HTTP POST (...)/exampleapp/new_note_spa
+  activate server
+  server-->>browser: Update the DOM
+  server-->>server: Update Server Side File
+
