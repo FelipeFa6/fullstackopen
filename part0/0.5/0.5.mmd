@@ -1,0 +1,25 @@
+sequenceDiagram
+  participant browser
+  participant server
+
+  browser->>server: HTTP GET (...)/exampleapp/spa
+  activate server
+  server->>browser: HTML Document
+  deactivate server
+
+  browser->>server: HTTP GET (...)/exampleapp/main.css
+  activate server
+  server->>browser: CSS File
+  deactivate server
+
+  browser->>server: HTTP GET (...)/exampleapp/spa.js
+  activate server
+  server->>browser: JavaScript File
+  deactivate server
+
+  browser->>server: HTTP GET (...)/exampleapp/data.json
+  activate server
+  server->>browser: data.json
+  deactivate server
+
+  browser->>browser: Render data.json
