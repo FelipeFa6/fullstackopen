@@ -49,18 +49,29 @@ const Statistics = (props) => {
 		<>
 			<h1>statistics</h1>
             { total != 0 ? (
-            <>
-		        <p>Good {props.good}</p>
-		        <p>Neutral {props.neutral}</p>
-		        <p>Bad {props.bad}</p>
-
-		        <p>all {total}</p>
-		        <p>average {average}</p>
-		        <p>positive {positive} %</p>
-            </>
+            <table>
+                <tbody>
+                    <StatisticLine text="good" value={props.good}/>
+                    <StatisticLine text="neutral" value={props.neutral}/>
+                    <StatisticLine text="bad" value={props.bad}/>
+                    <StatisticLine text="all" value={total}/>
+                    <StatisticLine text="average" value={average}/>
+                    <StatisticLine text="positive" value={positive + ' %'}/>
+                </tbody>
+            </table>
             )
                 : <p>No feedback given</p>
             }
 		</>
 	)
+}
+
+const StatisticLine = (props) => {
+    return (
+        <tr>
+            <td>{props.text}</td>
+            <td>{props.value}</td>
+        </tr>
+
+    )
 }
