@@ -31,8 +31,21 @@ const App = () => {
 
             <button onClick={handleVote}> Vote </button>
             <button onClick={handleNext}> Next </button>
+            <MostVotes anecdotes={anecdotes} points={points} />
+
         </div>
     )
 }
 
 export default App
+
+
+const MostVotes = (props) => {
+    return (
+        <div>
+            <h1>Anecdote with most votes</h1>
+            <p>{props.anecdotes[props.points.indexOf(Math.max(...props.points))]}</p>
+
+        </div>
+    )
+}
