@@ -51,36 +51,59 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-
-                <div>
-                    filter: <input onChange={handleFilterChange} value={filter} />
-                </div>
-
+            <Filter handler={handleFilterChange} text={filter} />
             <h2>add new</h2>
-            <form onSubmit={addPerson}>
-                <div>
-                    name: <input onChange={handleNameChange} value={newName} />
-                </div>
+            <PersonForm
+                nameHandler  = {handleNameChange}
+                phoneHandler = {handlePhoneChange}
+                addPerson    = {addPerson}
+                newName      = {newName}
+                newPhone     = {newPhone}
+            />
 
-                <div>
-                    phone: <input onChange={handlePhoneChange} value={newPhone} />
-                </div>
-
-                <div>
-                    <button type="submit"> add</button>
-                </div>
-            </form>
-            
-            <div>debug: {newName} {newPhone}</div>
             <h2>Numbers</h2>
-            { filteredPersons.map((person, index) => (
-                <div key={index}>
-                    - {person.name} {person.phone}
-                </div>
-            ))
-            }
+            <Persons persons={filteredPersons} />
+
         </div>
   )
 }
 
 export default App
+
+const Filter = ({ handler, text }) => {
+    return (
+        <div>
+            Filter: <input onChange={handler} value={text} />
+        </div>
+    );
+};
+
+const PersonForm = ({ nameHandler, phoneHandler, addPerson, newName, newPhone }) => {
+    return (
+        <form onSubmit={addPerson}>
+            <div>
+                Name: <input onChange={nameHandler} value={newName} />
+            </div>
+
+            <div>
+                Phone: <input onChange={phoneHandler} value={newPhone} />
+            </div>
+
+            <div>
+                <button type="submit">Add</button>
+            </div>
+        </form>
+    );
+};
+
+const Persons = ({ persons }) => {
+    return (
+        <div>
+            {persons.map((person, index) => (
+                <div key={index}>
+                - {person.name} {person.phone}
+                </div>
+            ))}
+        </div>
+    );
+};
