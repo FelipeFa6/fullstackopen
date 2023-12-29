@@ -14,6 +14,11 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault()
+        if (persons.some(person => person.name === newName)) {
+            alert(`${newName} already in phonebook`);
+            return;
+        }
+
         setPersons(copy => [...copy, {name: newName}])
     }
 
