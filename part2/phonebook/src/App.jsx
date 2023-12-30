@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import axios from 'axios';
+import personService from './services/Persons'
 
 const App = () => {
 
@@ -35,10 +35,17 @@ const App = () => {
             name: newName,
             phone: newPhone
         }
-
-        setPersons(copy => [...copy, newPerson])
-        setNewName('');
-        setNewPhone('');
+        
+        personService
+            .create(newPerson)
+            .then(response => {
+                setPersons(copy => [...copy, response.data])
+            })
+            .catch(error => alert(error))
+            .finally(() => {
+                setNewName('');
+                setNewPhone('');
+            })
     }
 
     const filteredPersons = persons.filter(person =>
@@ -46,14 +53,13 @@ const App = () => {
     );
 
     const fetchPersons = () => {
-        console.log('effect')
-        axios
-            .get('http://localhost:3001/persons')
+        personService
+            .getAll()
             .then(response => {
-                console.log(response.data)
                 setPersons(response.data)
             })
     }
+
 
     useEffect(fetchPersons, [])
 
