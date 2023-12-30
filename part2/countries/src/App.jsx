@@ -6,14 +6,9 @@ const App = () => {
     const [ countries, setCountries ] = useState([])
     const [ filter, setFilter ] = useState('')
 
-    const filterHandler = (event) => {
-        setFilter(event.target.value)
-    }
-
     const filteredCountries = () => countries.filter(country =>
         country.toLowerCase().includes(filter.toLowerCase())
     )
-
 
     const fetchCountries = () => {
         countriesService
@@ -24,23 +19,22 @@ const App = () => {
             })
     }
 
-    // on load
     useEffect(fetchCountries, [])
 
     return (
         <div>
             <div>
-                find countries <input onChange={filterHandler} value={filter}/>
+                find countries <input onChange={(e) => setFilter(e.target.value)} value={filter}/>
             </div>
 
-            <Countries countries={filteredCountries()}/>
+            <Countries countries={filteredCountries()} setFilter={setFilter}/>
         </div>
   )
 }
 
 export default App
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, setFilter }) => {
     if (countries.length === 0) {
         return <p>Loading...</p>
     }
@@ -58,7 +52,7 @@ const Countries = ({ countries }) => {
         {
             countries.map((country, index) => (
                 <div key={index}>
-                - {country}
+                - {country} <button onClick={() => setFilter(country)}> Show </button>
                 </div>
             ))
         }
@@ -82,7 +76,7 @@ const Details = ({name}) => {
             { current ?
                 <>
                     <h1>{ current.name.common }</h1>
-                    <p>Capital: { current.capital.join(', ') }</p>
+                    <p>Capital: { current.capital ? current.capital.join(', ') : 'None' }</p>
                     <p>Area { current.area }</p>
                     <h2>Languages</h2>
                     <ul>
