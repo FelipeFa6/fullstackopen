@@ -26,14 +26,36 @@ const App = () => {
     const addPerson = (event) => {
         event.preventDefault()
 
-        if (persons.some(person => person.name === newName && person.phone === newPhone)) {
-            alert(`${newName} ${newPhone} already registered`);
-            return;
-        }
+        const existingPerson = persons.find(
+            (person) => person.name === newName
+        );
 
         const newPerson = {
             name: newName,
             phone: newPhone
+        }
+
+        if (existingPerson) {
+            if (existingPerson.phone === newPhone){
+                alert(`${newName} already registered`);
+                return;
+            }
+            if (window.confirm( `${newName} exists. Do you want to update the phone number?`)) {
+                personService
+                    .update(existingPerson.id, newPerson)
+                    .then(response => {
+                        const updatedPersons = persons.map(person =>
+                            person.id === existingPerson.id ? response.data : person
+                        );
+
+                        setPersons(updatedPersons);
+
+
+                    })
+                setNewName('');
+                setNewPhone('');
+            }
+            return;
         }
         
         personService
@@ -90,7 +112,6 @@ const App = () => {
 
             <h2>Numbers</h2>
             <Persons handleDelete={handleDelete} persons={filteredPersons} />
-
         </div>
   )
 }
