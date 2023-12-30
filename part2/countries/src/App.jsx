@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/Countries'
+import weatherService from './services/Weather'
 
 const App = () => {
 
@@ -62,20 +63,32 @@ const Countries = ({ countries, setFilter }) => {
 
 const Details = ({name}) => {
     const [ current, setCurrent ] = useState(null)
+    const [ weather, setWeather ] = useState(null)
 
     useEffect(() => {
-        countriesService
-            .getByName(name)
-            .then(response => {
-                setCurrent(response.data)
-            })
-    }, [name])
+        const fetchData = async () => {
+            try {
+                const [countriesResponse, weatherResponse] = await Promise.all([
+                    countriesService.getByName(name),
+                    weatherService.getByCountryName(name)
+                ]);
+
+                setCurrent(countriesResponse.data);
+                setWeather(weatherResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [name]);
+
 
     return (
         <div>
             { current ?
                 <>
-                    <h1>{ current.name.common }</h1>
+                    <h2>{ current.name.common }</h2>
                     <p>Capital: { current.capital ? current.capital.join(', ') : 'None' }</p>
                     <p>Area { current.area }</p>
                     <h2>Languages</h2>
@@ -86,6 +99,10 @@ const Details = ({name}) => {
 
                     </ul>
                     <span style={{fontSize: '10em'}}>{current.flag}</span>
+
+                    <h2>Weather: {weather.current_condition[0].weatherDesc[0].value}</h2>
+                    <p>Temperature: {weather.current_condition[0].temp_C} Celsius</p>
+                    <p>Wind: {weather.current_condition[0].windspeedKmph} KM/H</p>
                 </>
                 :
                 <p>Loading...</p>
