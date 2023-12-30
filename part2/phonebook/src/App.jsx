@@ -11,7 +11,7 @@ const App = () => {
     const [persons, setPersons] = useState([])
     const [filter, setFilter] = useState('')
 
-    const [popup, setPopup] = useState('')
+    const [popup, setPopup] = useState({ })
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
@@ -63,7 +63,7 @@ const App = () => {
             .then(response => {
                 setPersons(copy => [...copy, response.data])
             })
-            .catch(error => alert(error))
+            .catch(error => displayPopup(error.message, 'red'))
             .finally(() => {
                 setNewName('');
                 setNewPhone('');
@@ -71,10 +71,13 @@ const App = () => {
             })
     }
 
-    const displayPopup = (message, seconds=1) => {
-        setPopup(message);
+    const displayPopup = (message, color='green') => {
+        const seconds = 1;
+
+        setPopup({message, color});
+
         setTimeout(() => {
-            setPopup('');
+            setPopup({});
         }, seconds * 1000);
     };
 
@@ -101,7 +104,7 @@ const App = () => {
                 const updatedPersons = persons.filter(person => person.id !== personID);
                 setPersons(updatedPersons);
             })
-            .catch(error => alert(error))
+            .catch(error => displayPopup(error.message, 'red'))
     }
 
     useEffect(fetchPersons, [])
@@ -109,7 +112,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={popup} />
+            <Notification popup={popup} />
             <Filter handler={handleFilterChange} text={filter} />
             <h2>add new</h2>
             <PersonForm
@@ -128,9 +131,9 @@ const App = () => {
 
 export default App
 
-const Notification = ({ message }) => {
+const Notification = ({ popup }) => {
     const style = {
-        color: 'green',
+        color: popup.color,
         background: 'lightgrey',
         borderStyle: 'solid',
         borderRadius: '5px',
@@ -138,13 +141,13 @@ const Notification = ({ message }) => {
         marginBottom: '10px',
     };
 
-    if (!message) {
+    if (!popup.message) {
         return null;
     }
 
     return (
         <div style={style}>
-            {message}
+            {popup.message}
         </div>
     );
 };
