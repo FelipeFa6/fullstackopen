@@ -60,6 +60,18 @@ const App = () => {
             })
     }
 
+    const handleDelete = (personID) => {
+        if (!window.confirm("Are you sure?")) {
+            return
+        }
+        personService
+            .remove(personID)
+            .then(() => {
+                const updatedPersons = persons.filter(person => person.id !== personID);
+                setPersons(updatedPersons);
+            })
+            .catch(error => alert(error))
+    }
 
     useEffect(fetchPersons, [])
 
@@ -77,7 +89,7 @@ const App = () => {
             />
 
             <h2>Numbers</h2>
-            <Persons persons={filteredPersons} />
+            <Persons handleDelete={handleDelete} persons={filteredPersons} />
 
         </div>
   )
@@ -111,12 +123,12 @@ const PersonForm = ({ nameHandler, phoneHandler, addPerson, newName, newPhone })
     );
 };
 
-const Persons = ({ persons }) => {
+const Persons = ({ handleDelete, persons }) => {
     return (
         <div>
             {persons.map((person, index) => (
                 <div key={index}>
-                - {person.name} {person.phone}
+                    - {person.name} {person.phone} <button onClick={() => handleDelete(person.id)}>Delete</button>
                 </div>
             ))}
         </div>
