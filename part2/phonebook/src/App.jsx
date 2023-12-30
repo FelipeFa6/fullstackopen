@@ -4,12 +4,14 @@ import personService from './services/Persons'
 
 const App = () => {
 
-    const [persons, setPersons] = useState([])
 
     const [newName, setNewName] = useState('')
     const [newPhone, setNewPhone] = useState('')
 
+    const [persons, setPersons] = useState([])
     const [filter, setFilter] = useState('')
+
+    const [popup, setPopup] = useState('')
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
@@ -47,13 +49,11 @@ const App = () => {
                         const updatedPersons = persons.map(person =>
                             person.id === existingPerson.id ? response.data : person
                         );
-
                         setPersons(updatedPersons);
-
-
                     })
                 setNewName('');
                 setNewPhone('');
+                displayPopup(`${newName} was updated.`)
             }
             return;
         }
@@ -67,8 +67,17 @@ const App = () => {
             .finally(() => {
                 setNewName('');
                 setNewPhone('');
+                displayPopup(`${newName} was added.`)
             })
     }
+
+    const displayPopup = (message, seconds=1) => {
+        setPopup(message);
+        setTimeout(() => {
+            setPopup('');
+        }, seconds * 1000);
+    };
+
 
     const filteredPersons = persons.filter(person =>
         person.name.toLowerCase().includes(filter.toLowerCase())
@@ -100,6 +109,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={popup} />
             <Filter handler={handleFilterChange} text={filter} />
             <h2>add new</h2>
             <PersonForm
@@ -117,6 +127,28 @@ const App = () => {
 }
 
 export default App
+
+const Notification = ({ message }) => {
+    const style = {
+        color: 'green',
+        background: 'lightgrey',
+        borderStyle: 'solid',
+        borderRadius: '5px',
+        padding: '10px',
+        marginBottom: '10px',
+    };
+
+    if (!message) {
+        return null;
+    }
+
+    return (
+        <div style={style}>
+            {message}
+        </div>
+    );
+};
+
 
 const Filter = ({ handler, text }) => {
     return (
