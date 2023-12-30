@@ -1,35 +1,101 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import countriesService from './services/Countries'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    const [ countries, setCountries ] = useState([])
+    const [ filter, setFilter ] = useState('')
+
+    const filterHandler = (event) => {
+        setFilter(event.target.value)
+    }
+
+    const filteredCountries = () => countries.filter(country =>
+        country.toLowerCase().includes(filter.toLowerCase())
+    )
+
+
+    const fetchCountries = () => {
+        countriesService
+            .getAll()
+            .then((response) => {
+                const countryNames = response.data.map(country => country.name.common)
+                setCountries(countryNames)
+            })
+    }
+
+    // on load
+    useEffect(fetchCountries, [])
+
+    return (
+        <div>
+            <div>
+                find countries <input onChange={filterHandler} value={filter}/>
+            </div>
+
+            <Countries countries={filteredCountries()}/>
+        </div>
   )
 }
 
 export default App
+
+const Countries = ({ countries }) => {
+    if (countries.length === 0) {
+        return <p>Loading...</p>
+    }
+
+    if (countries.length > 10) {
+        return <p>Be more specific</p>
+    }
+
+    if (countries.length === 1) {
+        return <Details name={countries[0]} />
+    }
+
+    return (
+        <div>
+        {
+            countries.map((country, index) => (
+                <div key={index}>
+                - {country}
+                </div>
+            ))
+        }
+        </div>
+    )
+}
+
+const Details = ({name}) => {
+    const [ current, setCurrent ] = useState(null)
+
+    useEffect(() => {
+        countriesService
+            .getByName(name)
+            .then(response => {
+                setCurrent(response.data)
+            })
+    }, [name])
+
+    return (
+        <div>
+            { current ?
+                <>
+                    <h1>{ current.name.common }</h1>
+                    <p>Capital: { current.capital.join(', ') }</p>
+                    <p>Area { current.area }</p>
+                    <h2>Languages</h2>
+                    <ul>
+                        {Object.entries(current.languages).map(([code, language]) => (
+                            <li key={code}>{`${language}`}</li>
+                        ))}
+
+                    </ul>
+                    <span style={{fontSize: '10em'}}>{current.flag}</span>
+                </>
+                :
+                <p>Loading...</p>
+            }
+        </div>
+    )
+}
