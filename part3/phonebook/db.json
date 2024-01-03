@@ -1,0 +1,14 @@
+{
+  "persons": [
+    {
+      "name": "Some",
+      "phone": "1234",
+      "id": 1
+    },
+    {
+      "name": "Rudolf",
+      "phone": "+22222",
+      "id": 2
+    }
+  ]
+}
