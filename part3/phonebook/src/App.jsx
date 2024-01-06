@@ -62,17 +62,17 @@ const App = () => {
             .create(newPerson)
             .then(response => {
                 setPersons(copy => [...copy, response.data])
+                displayPopup(`${newName} was added.`)
             })
-            .catch(error => displayPopup(error.message, 'red'))
+            .catch(e => displayPopup(e.response.data.error, 'red'))
             .finally(() => {
                 setNewName('');
                 setNewPhone('');
-                displayPopup(`${newName} was added.`)
             })
     }
 
     const displayPopup = (message, color='green') => {
-        const seconds = 1;
+        const seconds = 3;
 
         setPopup({message, color});
 
