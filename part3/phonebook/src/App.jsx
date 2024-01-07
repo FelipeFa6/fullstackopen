@@ -63,12 +63,10 @@ const App = () => {
             .then(response => {
                 setPersons(copy => [...copy, response.data])
                 displayPopup(`${newName} was added.`)
-            })
-            .catch(e => displayPopup(e.response.data.error, 'red'))
-            .finally(() => {
                 setNewName('');
                 setNewPhone('');
             })
+            .catch(e => displayPopup(e.response.data.error, 'red'))
     }
 
     const displayPopup = (message, color='green') => {
