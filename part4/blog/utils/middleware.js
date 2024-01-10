@@ -1,33 +1,38 @@
+const logger = require('./logger');
+
 const requestLogger = (req, res, next) => {
-	const initial_time = Date.now();
+	const initialTime   = Date.now();
+	const requestedPath = req.path;
 
 	res.on('finish', () => {
-		const duration = Date.now() - initial_time;
+		const duration  = Date.now() - initialTime;
 		const timestamp = new Date().toISOString();
 
-		logger.info(`${req.method} ${req.url} ${res.statusCode} ${res.get('content-length') || 0} - ${duration} ms`);
+		logger.info(`${req.method} ${requestedPath} ${res.statusCode} - ${duration} ms`);
+		logger.info('---');
 	});
 
 	next();
-}
+};
 
-const errorHandler = (error, request, response, next) => {
+
+const errorHandler = (error, req, res, next) => {
 	logger.error(error.message)
 
 	if (error.name === 'CastError') {
-		return response.status(400).send({ error: 'malformatted id' })
+		return res.status(400).send({ error: 'malformatted id' })
 	}  else if (error.name === 'ValidationError') {
-		return response.status(400).send({ error: error.message })
+		return res.status(400).send({ error: error.message })
 	}
 	else {
-		return response.status(400).send({ error: error.message })
+		return res.status(400).send({ error: error.message })
 	}
 
 	next(error)
 }
 
-const unknownEndpoint = (request, response) => {
-	response.status(404).send({ error: 'unknown endpoint' })
+const unknownEndpoint = (req, res) => {
+	res.status(404).send({ error: 'unknown endpoint' })
 }
 
 module.exports = { requestLogger, errorHandler, unknownEndpoint };
