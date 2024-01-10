@@ -1,11 +1,9 @@
-require('dotenv').config();
-
-const express = require('express');
-const app = express();
-const cors = require('cors');
+const express  = require('express');
+const app      = express();
+const cors     = require('cors');
 const mongoose = require('mongoose');
 
-//utils
+const config = require('./utils/config');
 const logger = require('./utils/logger');
 
 const blogSchema = new mongoose.Schema({
@@ -17,10 +15,17 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema);
 
-const mongoUrl = process.env.MONGODB_URI;
-mongoose.connect(mongoUrl);
+// setup connection
+mongoose.set('strictQuery', false);
+
+mongoose.connect(config.MONGODB_URI)
+	.then(() => {
+		logger.info("successfully connected to mongoDB!");
+	})
+	.catch(e => logger.error("error connecting to MongoDB: ", e.message));
 
 app.use(cors());
+app.use(express.static('dist'))
 app.use(express.json());
 
 app.get('/api/blogs', (request, response) => {
