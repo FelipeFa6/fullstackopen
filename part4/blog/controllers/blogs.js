@@ -1,36 +1,38 @@
 const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
 
-blogRouter.get('/', (request, response) => {
-	Blog
-		.find({})
-		.then(blogs => {
-			response.json(blogs)
-		})
+blogRouter.get('/', async (request, response) => {
+    try {
+        const blogs = await Blog.find({});
+        response.json(blogs);
+    } catch (error) {
+        response.status(500).json({ error: error.message });
+    }
 });
 
-blogRouter.get('/:id', (request, response) => {
-    console.log(request.params)
-    Blog.findById(request.params.id)
-        .then(blog => {
-            if (blog) {
-                response.status(200).json(blog);
-            } else {
-                response.status(404).send('Not found');
-            }
-        })
-        .catch(e => next(e));
+blogRouter.get('/:id', async (request, response) => {
+    try {
+        const blog = await Blog.findById(request.params.id);
+        if (blog) {
+            response.status(200).json(blog);
+        } else {
+            response.status(404).send('Not found');
+        }
+    } catch (error) {
+        response.status(500).json({ error: error.message });
+    }
 });
 
-blogRouter.post('/', (request, response) => {
-	const blog = new Blog(request.body)
-	const { title, author, url, likes } = blog;
+blogRouter.post('/', async (request, response) => {
+    try {
+        const blog = new Blog(request.body);
+        const { title, author, url, likes } = blog;
 
-	blog
-		.save()
-		.then(result => {
-			response.status(201).json(result)
-		})
+        const result = await blog.save();
+        response.status(201).json(result);
+    } catch (error) {
+        response.status(500).json({ error: error.message });
+    }
 });
 
 module.exports = blogRouter;
