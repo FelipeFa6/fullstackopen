@@ -19,7 +19,7 @@ describe('Total likes', () => {
 	})
 })
 
-describe('highest likes post', () => {
+describe('favoriteBlog', () => {
 	const expectedBlog = {
 		title: "Canonical string reduction",
 		author: "Edsger W. Dijkstra",
@@ -38,5 +38,23 @@ describe('highest likes post', () => {
 	test('returns the most liked blog object', () => {
 		const result = listHelper.favoriteBlog(blogs);
 		expect(result).toEqual(expectedBlog);
+	})
+})
+
+describe('author with the most blogs', () => {
+	const listOfAuthors = [
+		{ author: "Expected Author", likes:0},
+		{ author: "Expected Author", likes:0},
+		{ author: "Ada Lovelace", likes:4},
+	]
+
+	const expectedResult = {
+		author: "Expected Author",
+		blogs:2
+	};
+
+	test('Should return Expected Author', () => {
+		const result = listHelper.mostBlogs(listOfAuthors);
+		expect(result).toEqual(expectedResult)
 	})
 })
