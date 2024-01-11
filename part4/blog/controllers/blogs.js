@@ -10,11 +10,16 @@ blogRouter.get('/', (request, response) => {
 });
 
 blogRouter.get('/:id', (request, response) => {
-	Blog
-		.find({})
-		.then(blogs => {
-			response.json(blogs)
-		})
+    console.log(request.params)
+    Blog.findById(request.params.id)
+        .then(blog => {
+            if (blog) {
+                response.status(200).json(blog);
+            } else {
+                response.status(404).send('Not found');
+            }
+        })
+        .catch(e => next(e));
 });
 
 blogRouter.post('/', (request, response) => {
