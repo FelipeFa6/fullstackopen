@@ -9,7 +9,15 @@ blogRouter.get('/', (request, response) => {
 		})
 });
 
-blogRouter.post('/api/blogs', (request, response) => {
+blogRouter.get('/:id', (request, response) => {
+	Blog
+		.find({})
+		.then(blogs => {
+			response.json(blogs)
+		})
+});
+
+blogRouter.post('/', (request, response) => {
 	const blog = new Blog(request.body)
 	const { title, author, url, likes } = blog;
 
