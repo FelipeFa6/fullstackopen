@@ -58,3 +58,22 @@ describe('author with the most blogs', () => {
 		expect(result).toEqual(expectedResult)
 	})
 })
+
+
+describe('author with the most likes', () => {
+	const listOfAuthors = [
+		{ author: "Expected Author", likes:10},
+		{ author: "Expected Author", likes:20},
+		{ author: "Ada Lovelace", likes:4},
+	]
+
+	const expectedResult = {
+		author: "Expected Author",
+		likes:30
+	};
+
+	test('Should return Expected Author', () => {
+		const result = listHelper.mostLikes(listOfAuthors);
+		expect(result).toEqual(expectedResult)
+	})
+})
