@@ -2,16 +2,16 @@ const lodash = require('lodash')
 
 // always returns 1
 const dummy = (blogs) => {
-	//...
-	return 1;
+    //...
+    return 1;
 }
 
 // sums the likes on the argument array
 const totalLikes = (blogs) => {
-	const likes = blogs.reduce((sum, blog) => {
-		return sum + blog.likes
-	}, 0)
-	return likes;
+    const likes = blogs.reduce((sum, blog) => {
+        return sum + blog.likes
+    }, 0)
+    return likes;
 }
 
 // orders the arg array (+ to -) return the first element
@@ -20,8 +20,8 @@ const favoriteBlog = (blogs) => {
         return null;
     }
 
-	blogs.sort((a, b) => b.likes - a.likes);
-	return blogs[0];
+    blogs.sort((a, b) => b.likes - a.likes);
+    return blogs[0];
 }
 
 // return the author with more blogs in the array
