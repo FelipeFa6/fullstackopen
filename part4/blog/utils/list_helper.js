@@ -43,7 +43,7 @@ const mostBlogs = (blogs) => {
 };
 
 // return the author with most likes
-const mostLikes = blogs => {
+const mostLikes = (blogs) => {
     const authorLikes = []
     const groupedAuthors = lodash.chain(blogs).groupBy('author').value()
 
