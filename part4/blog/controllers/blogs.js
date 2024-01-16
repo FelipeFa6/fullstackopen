@@ -28,6 +28,11 @@ blogRouter.post('/', async (request, response) => {
         const blog = new Blog(request.body);
         const { title, author, url, likes } = blog;
 
+        if(!title || !url) {
+            response.status(400).end();
+            return;
+        }
+
         const result = await blog.save();
         response.status(201).json(result);
     } catch (error) {

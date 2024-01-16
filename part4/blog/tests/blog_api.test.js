@@ -14,7 +14,12 @@ const new_blog = {
     url: "www.techenthusiast21.com/exploring-machine-learning"
 };
 
-describe('API endpoint test /api/blogs', () => {
+//insert new blog
+const bad_request_blog = {
+    author: "Jogn Doe",
+};
+
+describe('GET /api/blogs', () => {
     test('blogs are returned in JSON format', async () => {
         await api
             .get('/api/blogs')
@@ -26,9 +31,10 @@ describe('API endpoint test /api/blogs', () => {
         const response = await api.get('/api/blogs');
         expect(response.body[0].id).toBeDefined();
     })
-    
+});
+
+describe("POST /api/blogs", () => {
     test('add a new blog to database', async () => {
-        //count current DB data
         const blogsAtInit = await helper.blogsInDb();
 
         await api.post('/api/blogs')
@@ -40,16 +46,12 @@ describe('API endpoint test /api/blogs', () => {
         expect(blogsAtFinish).toHaveLength(blogsAtInit.length +1)
     })
 
-/*
- * //Single id test
- * test('single blog retreived', async () => {
- *     await api
- *         .get('/api/blogs/65a04ef859788ee90e463095')
- *         .expect(200)
- *         .expect('Content-Type', /application\/json/)
- * })
- */
-});
+    test('empty title or url = bad request', async () => {
+        const response = await api.post('/api/blogs').send(bad_request_blog);
+        expect(response.status).toEqual(400);
+    });
+
+})
 
 describe("Model integrity", () => {
     test("if like not set default to -> 0", async () => {
