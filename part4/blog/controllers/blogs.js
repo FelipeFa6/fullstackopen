@@ -1,16 +1,16 @@
 const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
 
-blogRouter.get('/', async (request, response) => {
+blogRouter.get('/', async (request, response, next) => {
     try {
         const blogs = await Blog.find({});
         response.json(blogs);
-    } catch (error) {
-        response.status(500).json({ error: error.message });
+    } catch (e) {
+        next(e);
     }
 });
 
-blogRouter.get('/:id', async (request, response) => {
+blogRouter.get('/:id', async (request, response, next) => {
     try {
         const blog = await Blog.findById(request.params.id);
         if (blog) {
@@ -18,32 +18,36 @@ blogRouter.get('/:id', async (request, response) => {
         } else {
             response.status(404).send('Not found');
         }
-    } catch (error) {
-        response.status(500).json({ error: error.message });
+    } catch (e) {
+        next(e);
     }
 });
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', async (request, response, next) => {
     try {
         const blog = new Blog(request.body);
         const { title, author, url, likes } = blog;
 
-        if(!title || !url) {
+        if (!title || !url) {
             response.status(400).end();
             return;
         }
 
         const result = await blog.save();
         response.status(201).json(result);
-    } catch (error) {
-        response.status(500).json({ error: error.message });
+    } catch (e) {
+        next(e);
     }
 });
 
-blogRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-})
+blogRouter.delete('/:id', async (request, response, next) => {
+    try {
+        await Blog.findByIdAndRemove(request.params.id);
+        response.status(204).end();
+    } catch (e) {
+        next(e);
+    }
+});
 
 blogRouter.put('/:id', async (request, response, next) => {
     try {
@@ -58,9 +62,10 @@ blogRouter.put('/:id', async (request, response, next) => {
         } else {
             response.status(404).end();
         }
-    } catch (error) {
-        next(error);
+    } catch (e) {
+        next(e);
     }
 });
+1
 
 module.exports = blogRouter;
