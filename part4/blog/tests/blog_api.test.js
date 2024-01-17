@@ -49,6 +49,26 @@ describe("POST /api/blogs", () => {
 
 })
 
+describe("PUT /api/blogs/:id", () => {
+	test('blog with new amount of likes is updated', async () => {
+		const blogsAtInit = await helper.blogsInDb()
+		const selectedBlog = blogsAtInit[0]
+
+		const updateData = {
+			likes: 42
+		}
+
+		await api
+			.put(`/api/blogs/${selectedBlog.id}`)
+			.send(updateData)
+			.expect(200)
+
+		const blogsAtFinish = await helper.blogsInDb()
+		const likes = blogsAtFinish.map(b => b.likes)
+		expect(likes).toContain(updateData.likes)
+	})
+})
+
 describe("DELETE /api/blogs/:id", () => {
     test('deletion of resource', async () => {
         const blogsAtInit = await helper.blogsInDb()
