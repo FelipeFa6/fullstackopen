@@ -46,7 +46,6 @@ describe("POST /api/blogs", () => {
         const response = await api.post('/api/blogs').send(helper.invalid_blog);
         expect(response.status).toEqual(400);
     });
-
 })
 
 describe("PUT /api/blogs/:id", () => {
