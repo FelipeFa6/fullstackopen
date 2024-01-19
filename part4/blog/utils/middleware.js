@@ -1,32 +1,34 @@
 const logger = require('./logger');
 
 const requestLogger = (req, res, next) => {
-	const initialTime   = Date.now();
-	const requestedPath = req.path;
+    const initialTime   = Date.now();
+    const requestedPath = req.path;
 
-	res.on('finish', () => {
-		const duration  = Date.now() - initialTime;
-		const timestamp = new Date().toISOString();
+    res.on('finish', () => {
+        const duration  = Date.now() - initialTime;
+        const timestamp = new Date().toISOString();
 
-		logger.info(`${req.method} ${requestedPath} ${res.statusCode} - ${duration} ms`);
-		logger.info('---');
-	});
+        logger.info(`${req.method} ${requestedPath} ${res.statusCode} - ${duration} ms`);
+        logger.info('---');
+    });
 
-	next();
+    next();
 };
 
-
 const errorHandler = (error, req, res, next) => {
-	logger.error(error.message)
+    logger.error(error.message)
 
-	if (error.name === 'CastError') {
-		return res.status(400).send({ error: 'malformatted id' })
-	}  else if (error.name === 'ValidationError') {
-		return res.status(400).send({ error: error.message })
-	}
-	else {
-		return res.status(400).send({ error: error.message })
-	}
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' });
+    } else if (error.name === 'ValidationError') {
+        return res.status(400).send({ error: error.message });
+    } else if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ error: 'invalid token' });
+    } else if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'token expired' });
+    } else {
+        return res.status(400).send({ error: error.message });
+    }
 
 	next(error)
 }
